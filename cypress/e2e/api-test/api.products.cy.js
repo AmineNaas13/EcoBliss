@@ -1,5 +1,5 @@
 
-describe('Products API', () => {
+describe('API Products Tests', () => {
     let productId;
 
 

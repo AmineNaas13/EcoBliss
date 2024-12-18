@@ -1,4 +1,7 @@
-describe('API Orders', () => {
+import { faker } from '@faker-js/faker';
+import { resetCart } from '../../support/utils';
+
+describe('API Orders Tests', () => {
 
   const apiOrders = `${Cypress.env("apiUrl")}/orders`;
   const apiOrdersAdd = `${Cypress.env("apiUrl")}/orders/add`;
@@ -18,7 +21,10 @@ describe('API Orders', () => {
     })
   })
 
-  // Retourner la list des produit qui sont dans le panier
+  // Retourner la liste des produit qui sont dans le panier
+  beforeEach(() => {
+    resetCart(token)
+  })
 
   before(() => {
     cy.request({
@@ -64,15 +70,57 @@ describe('API Orders', () => {
         expect(response.status).to.eq(200); // Vérifie que la requête réussit.
         expect(response.body).to.have.property("orderLines")
         expect(response.body.orderLines).to.be.an("array").and.not.to.be.empty
-        expect(response.body.orderLines[0].product).to.have.property("id", 5)
+        expect(response.body.orderLines[0].product).to.have.property("id", 3)
 
       });
 
     });
-
-
-
   });
+  // Ajouter un produit disponible au panier
+
+
+
+  it('should add available product in the cart', () => {
+    cy.request({
+      method: 'PUT',  // on devrait avoir un post  
+      url: apiOrdersAdd,
+      headers: {
+        'Authorization': 'Bearer ' + token,
+      },
+      body: {
+        "product": 5,
+        "quantity": 2,
+      }
+    }).then((response) => {
+
+      expect(response.status).to.eq(200); // Vérifie que la requête réussit.
+      expect(response.body).to.have.property("orderLines")
+      expect(response.body.orderLines).to.be.an("array").and.not.to.be.empty
+      expect(response.body.orderLines[0].product).to.have.property("id", 5)
+
+
+    })
+  })
+
+
+  // Ajouter un produit en rupture de stock au panier 
+  it('should not add unavailble product in the cart', () => {
+    cy.request({
+      method: 'PUT',
+      url: apiOrdersAdd,
+      failOnStatusCode: false,
+      headers: {
+        'Authorization': 'Bearer ' + token,
+      },
+      body: {
+        "product": 3,
+        "quantity": 1,
+      }
+    }).then((response) => {
+      expect(response.status).to.eq(200)// comportement anormal on devrait recevoir une 400
+
+    })
+  })
 
 
 })

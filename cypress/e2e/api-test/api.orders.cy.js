@@ -81,6 +81,7 @@ describe('API Orders Tests', () => {
 
 
   it('should add available product in the cart', () => {
+
     cy.request({
       method: 'PUT',  // on devrait avoir un post  
       url: apiOrdersAdd,

@@ -44,7 +44,7 @@ describe('API reviews tests', () => {
 
         }).then((response) => {
 
-            expect(response.status).to.be.eq(200) // il retourne un un code 400 au lieu de 200
+            expect(response.status).to.be.eq(200)
             expect(response.body).to.have.property('title', titre);
             expect(response.body).to.have.property('comment', commentaire);
             expect(response.body).to.have.property('rating', rate);

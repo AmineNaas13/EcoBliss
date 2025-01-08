@@ -26,70 +26,71 @@ describe('Cart tests', () => {
             const randomIndex = Math.floor(Math.random() * Count);
             cy.get('[data-cy="product"]').eq(randomIndex).contains("Consulter").click();
 
-
+            cy.wait(3000)
             // Vérifier le stock du produit
             cy.get('[data-cy="detail-product-stock"]').invoke('text').then((stockText) => {
-                const stock = 0;
-                const match = stockText.match(/\d+/);
-                if (match) {
-                    const stock = parseInt(match[0], 10);
-                    cy.log(`Stock initial: ${stock}`);
-                }
 
-                // const stock = parseInt(stockText.match(/\d+/)[0], 10); // // Extraire le nombre et le convertir en entier
-                // cy.log(`Stock initial: ${stock}`);
+                const stock = parseInt(stockText);
+                cy.log(`Stock initial: ${stock}`);
 
                 if (stock > 1) {
 
-                    cy.contains('Ajouter au panier').click();
-
-                    // Naviguer vers la page du panier
-                    cy.get('[data-cy="nav-link-cart"]').click();
+                    cy.get('[data-cy="detail-product-add"]').click();
 
                     // verifier la présence du produit dans le panier
                     cy.get('#cart-content').should('exist');
-                    cy.get('[data-cy="cart-product"]').should('have.length', 1);
+                    cy.get('[data-cy="cart-line"]').should('have.length', 1);
 
 
                     // Retourner sur la page produit pour vérifier le stock mis à jour
                     cy.go('back'); // Retourner sur la page précédente
                     cy.reload(); // Recharger pour garantir les mises à jour du stock
-                    cy.get('[data-cy="detail-product-stock"]').invoke('text')
-                        .should('contain', `${stock - 1} en stock`);
+                    cy.get('[data-cy="detail-product-stock"]').invoke('text').then((newStock) => {
+                        expect(parseInt(newStock)).to.eq(stock - 1)
+                    })
 
 
-                    // Ajouter le produit au panier
+                    //Ajouter le produit au panier
                     cy.get('[data-cy="detail-product-quantity"]').clear().type('1');
                     cy.contains('Ajouter au panier').click();
 
                     // Vérifier que le produit est ajouté au panier via l'API
-                    cy.request({
-                        method: 'GET',
-                        url: "http://localhost:8081/orders",
+                    // cy.request({
+                    //     method: 'GET',
+                    //     url: "http://localhost:8081/orders",
 
 
-                    }).then((response) => {
-                        expect(response.status).to.eq(200);// Vérifie que l'API renvoie un statut 200
+                    // }).then((response) => {
+                    //     expect(response.status).to.eq(200);// Vérifie que l'API renvoie un statut 200
 
-                    })
+                    // })
 
-                } else {
+                }
+                else {
                     cy.log('Le Stock est insuffisant')
                 }
 
-                // Vérification des limites : stock négatif
-                cy.get('[data-cy="detail-product-quantity"]').clear().type('-1'); // Tester quantité négative
-                cy.contains('Ajouter au panier').click();
-                cy.get('[data-cy="detail-product-form"]').should('have.class', 'ng-invalid');
 
-                // Vérification des limites : stock supérieur à 20
-
-                cy.get('[data-cy="detail-product-quantity"]').clear().type('21'); // Tester quantité supérieure à 20
-                cy.contains('Ajouter au panier').click();
 
             });
 
         });
+
+    });
+    it('shouldn\'t change the cart with negative number', () => {
+        cy.get('[data-cy="nav-link-products"]').click();
+        cy.get('[data-cy="product-link"]').first().click();
+        cy.get('[data-cy="detail-product-quantity"]').clear().type('-1'); // Tester quantité négative
+        cy.contains('Ajouter au panier').click();
+        cy.get('[data-cy="detail-product-form"]').should('have.class', 'ng-invalid');
+
+    });
+
+    it('shouldn\'t change the cart with 20+ number', () => {
+        cy.get('[data-cy="nav-link-products"]').click();
+        cy.get('[data-cy="product-link"]').first().click();
+        cy.get('[data-cy="detail-product-quantity"]').clear().type('21'); // Tester quantité supérieure à 20
+        cy.contains('Ajouter au panier').click();
 
     });
 

@@ -71,6 +71,7 @@ describe("Cart tests", () => {
         cy.get('[data-cy="product-link"]').first().click();
         cy.get('[data-cy="detail-product-quantity"]').clear().type("-1"); // Tester quantité négative
         cy.get('[data-cy="detail-product-add"]').click();
+        cy.get('[data-cy="detail-product-form"]').should('have.class', 'ng-invalid');
         cy.get("#cart-content").should("not.exist");
 
     });
@@ -82,10 +83,8 @@ describe("Cart tests", () => {
         cy.get('[data-cy="detail-product-add"]').click();
         cy.get("#cart-content").should("exist");
 
+
     });
-
-    // nouveau
-
 
     it("should add a product to the cart and verify it in the API", () => {
         cy.get('[data-cy="nav-link-products"]').click();

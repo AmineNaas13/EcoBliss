@@ -24,7 +24,7 @@ describe('API reviews tests', () => {
     })
     it('add a review', () => {
 
-        const titre = faker.lorem.lines(2)
+        const titre = faker.lorem.lines(1)
         const commentaire = faker.lorem.paragraph()
         const rate = faker.number.int({ min: 0, max: 5 })
 
@@ -43,12 +43,10 @@ describe('API reviews tests', () => {
             }
 
         }).then((response) => {
-
             expect(response.status).to.be.eq(200)
             expect(response.body).to.have.property('title', titre);
             expect(response.body).to.have.property('comment', commentaire);
             expect(response.body).to.have.property('rating', rate);
-
         })
 
     });

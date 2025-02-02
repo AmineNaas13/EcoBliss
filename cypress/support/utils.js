@@ -1,4 +1,5 @@
 export function resetCart(token) {
+
     if (!token) {
         return;
     }
@@ -22,13 +23,7 @@ export function resetCart(token) {
             }).then((response) => {
                 expect(response.status).to.eq(200); // Vérifie que la requête réussit.
 
-
             });
-
-
         }
-
     });
-
-
 }

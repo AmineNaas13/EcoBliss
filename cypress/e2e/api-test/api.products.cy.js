@@ -2,8 +2,6 @@
 describe('API Products Tests', () => {
     let productId;
 
-
-
     it("Get products and extract ID", () => {
         cy.request({
             method: 'GET',
@@ -26,9 +24,6 @@ describe('API Products Tests', () => {
                 for (const property of propertyToCheck) {
                     expect(response.body).to.have.property(property)
                 }
-
             })
-
-
     });
 })

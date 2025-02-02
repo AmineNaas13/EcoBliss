@@ -16,15 +16,16 @@ describe('API login Tests', () => {
             method: 'POST',
             url: apiLogin,
             failOnStatusCode: false,
+            headers: {
+                'Authorization': 'Bearer ' + token,
+            },
             body: {
                 username: fakeUsername,
                 password: fakePasword
             }
 
         }).then((response) => {
-
-            expect(response.status).to.eq(401)
-
+            expect(response.status).to.eq(401);
         })
     });
 
@@ -40,9 +41,9 @@ describe('API login Tests', () => {
                 password: 'testtest',
             }
         }).then((response) => {
-            expect(response.status).to.eq(200)
+            expect(response.status).to.eq(200);
             token = response.body.token;
-            cy.log(token)
+            cy.log(token);
         })
 
     });

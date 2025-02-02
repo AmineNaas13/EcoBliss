@@ -12,6 +12,7 @@ describe("Cart tests", () => {
 
         //verifier que l'utlisateur est redirigé
         cy.url().should("eq", "http://localhost:8080/#/");
+
     });
 
 
@@ -40,9 +41,7 @@ describe("Cart tests", () => {
                         cy.log(`Stock initial: ${stock}`);
 
                         if (stock > 1) {
-
                             cy.get('[data-cy="detail-product-add"]').click();
-
                             // verifier la présence du produit dans le panier
                             cy.get("#cart-content").should("exist");
                             cy.get('[data-cy="cart-line"]').should("have.length", 1);
@@ -109,16 +108,14 @@ describe("Cart tests", () => {
                 method: "GET",
                 url: "http://localhost:8081/orders",
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    'Authorization': 'Bearer ' + token,
                 },
             }).then((response) => {
                 expect(response.status).to.eq(200);
-                cy.log("alpha")
 
                 cy.log(' TEST Response:', JSON.stringify(response.body));
                 expect(response.body).to.have.property("orderLines");
-                expect(response.body.orderLines).to.be.an("array").and.not.to.be.empty
-                //expect(response.body.orderLines[0].product.id).eq(3)
+                expect(response.body.orderLines).to.be.an("array").and.not.to.be.empty;
                 const productInCart = response.body.orderLines.find(orderLine => orderLine.product.id === 3);
                 expect(productInCart).to.not.be.undefined;
 

@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker';
 import { resetCart } from '../../support/utils';
 
 describe('API Orders Tests', () => {
@@ -20,8 +19,8 @@ describe('API Orders Tests', () => {
 
     })
   })
-
   // Retourner la liste des produit qui sont dans le panier
+
   beforeEach(() => {
     resetCart(token)
   })
@@ -41,7 +40,22 @@ describe('API Orders Tests', () => {
     })
 
   })
+  it('return  a list of products in the cart', () => {
+    cy.request({
+      method: 'GET',
+      url: apiOrders,
+      headers: {
+        'Authorization': 'Bearer ' + token,
+      },
 
+    }).then((response) => {
+      expect(response.status).to.eq(200); // Vérifie que la requête réussit.
+      expect(response.body).exist;
+      expect(response.body).to.have.property("orderLines")
+      expect(response.body.orderLines).to.be.an("array")
+    });
+
+  });
 
   it('should return products in the cart after logged in', () => {
     //ajouter un produit
@@ -50,7 +64,7 @@ describe('API Orders Tests', () => {
       url: apiOrdersAdd,
       headers: {
         'Authorization': 'Bearer ' + token,
-        // Authorization: `Bearer ${token}`, // Ajout du token JWT.
+
       },
       body: {
         product: 3,
@@ -78,8 +92,6 @@ describe('API Orders Tests', () => {
   });
   // Ajouter un produit disponible au panier
 
-
-
   it('should add available product in the cart', () => {
 
     cy.request({
@@ -102,8 +114,6 @@ describe('API Orders Tests', () => {
 
     })
   })
-
-
   // Ajouter un produit en rupture de stock au panier 
   it('should not add unavailble product in the cart', () => {
     cy.request({
@@ -119,9 +129,8 @@ describe('API Orders Tests', () => {
       }
     }).then((response) => {
       expect(response.status).to.eq(200)// comportement anormal on devrait recevoir une 400
+      expect(response.body.orderLines[0].product).to.have.property("id", 3)
 
     })
   })
-
-
 })
